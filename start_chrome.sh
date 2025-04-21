@@ -44,17 +44,47 @@ check_drivers() {
 
     # 自动安装驱动
     install_driver() {
-        echo -e "${YELLOW}正在使用Homebrew安装chromedriver...${NC}"
-        # 先尝试更新
-        brew upgrade --cask chromedriver 2>/dev/null || brew install --cask chromedriver
-        if [ $? -eq 0 ]; then
-            echo -e "${GREEN}驱动安装/更新成功！${NC}"
-            return 0
-        else
-            echo -e "${RED}驱动安装失败！${NC}"
-            return 1
+    echo -e "${YELLOW}开始尝试下载与 Chrome 兼容的 chromedriver...${NC}"
+
+    # 获取 Chrome 当前完整版本（如 135.0.7049.96）
+    CHROME_VERSION=$("/Applications/Google Chrome.app/Contents/MacOS/Google Chrome" --version | awk '{print $3}')
+    echo -e "${YELLOW}检测到 Chrome 版本: ${CHROME_VERSION}${NC}"
+
+    BASE_VERSION=$(echo "$CHROME_VERSION" | cut -d'.' -f1-3) # 例如 135.0.7049
+    PATCH_VERSION=$(echo "$CHROME_VERSION" | cut -d'.' -f4)  # 例如 96
+
+    TMP_DIR="/tmp/chromedriver_update"
+    mkdir -p "$TMP_DIR"
+    cd "$TMP_DIR" || return 1
+
+    FOUND_DRIVER=0
+
+    for ((i=0; i<5; i++)); do
+        TRY_PATCH=$((PATCH_VERSION - i))
+        TRY_VERSION="${BASE_VERSION}.${TRY_PATCH}"
+        DRIVER_URL="https://storage.googleapis.com/chrome-for-testing-public/${TRY_VERSION}/mac-arm64/chromedriver-mac-arm64.zip"
+
+        echo -e "${YELLOW}尝试下载版本: $TRY_VERSION${NC}"
+        curl -sf -O "$DRIVER_URL"
+
+        if [ -f "chromedriver-mac-arm64.zip" ]; then
+            echo -e "${GREEN}找到可用的 chromedriver: $TRY_VERSION${NC}"
+            unzip -o chromedriver-mac-arm64.zip
+            sudo mv chromedriver-mac-arm64/chromedriver /usr/local/bin/chromedriver
+            sudo chmod +x /usr/local/bin/chromedriver
+            echo -e "${GREEN}chromedriver 安装成功，版本为：$(chromedriver --version)${NC}"
+            FOUND_DRIVER=1
+            break
         fi
-    }
+    done
+
+    if [ "$FOUND_DRIVER" -eq 0 ]; then
+        echo -e "${RED}未能在 5 个小版本内找到可用 chromedriver${NC}"
+        return 1
+    fi
+
+    return 0
+}
 
     # 执行版本检查
     if ! check_driver; then
