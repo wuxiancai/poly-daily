@@ -388,11 +388,12 @@ class CryptoTrader:
         # 监控网站配置
         url_frame = ttk.LabelFrame(scrollable_frame, text="Monitoring-Website-Configuration", padding=(2, 2))
         url_frame.pack(fill="x", padx=2, pady=5)
-        ttk.Label(url_frame, text="WEB:", font=('Arial', 10)).grid(row=0, column=0, padx=5, pady=5)
+        
+        ttk.Label(url_frame, text="WEB:", font=('Arial', 10)).grid(row=0, column=1, padx=5, pady=5)
         
         # 创建下拉列和输入框组合控件
         self.url_entry = ttk.Combobox(url_frame, width=46)
-        self.url_entry.grid(row=0, column=1, padx=5, pady=5, sticky="ew")
+        self.url_entry.grid(row=0, column=2, padx=5, pady=5, sticky="ew")
         
         # 从配置文件加载历史记录
         if 'url_history' not in self.config:
@@ -691,7 +692,6 @@ class CryptoTrader:
         self.amount_no4_button.bind('<Button-1>', self.click_amount)
         self.amount_no4_button.grid(row=2, column=3, padx=2, pady=5)
 
-        
         # 配置列权重使按钮均匀分布
         for i in range(4):
             buy_button_frame.grid_columnconfigure(i, weight=1)
@@ -716,15 +716,15 @@ class CryptoTrader:
         self.sell_confirm_button = ttk.Button(button_frame, text="Sell-confirm", width=10,
                                            command=self.click_sell_confirm_button)
         self.sell_confirm_button.grid(row=0, column=2, padx=2, pady=5)
+ 
+        # 添加币种选择下拉框
+        coin_frame = ttk.Frame(button_frame)
+        coin_frame.grid(row=1, column=0, padx=2, pady=5)
+        ttk.Label(coin_frame, text="Coin:", font=('Arial', 14)).pack(side=tk.LEFT)
+        self.coin_combobox = ttk.Combobox(coin_frame, width=4, values=['BTC', 'ETH', 'SOL'])
+        self.coin_combobox.pack(side=tk.LEFT)
+        self.coin_combobox.set('BTC')  # 设置默认值
         
-        self.btc_button = ttk.Button(button_frame, text="BTC", width=6,
-                                                 command=lambda: self.find_54_coin("BTC"))
-        self.btc_button.grid(row=1, column=0, padx=2, pady=5)
-
-        self.eth_button = ttk.Button(button_frame, text="ETH", width=6,
-                                                command=lambda: self.find_54_coin("ETH"))
-        self.eth_button.grid(row=1, column=1, padx=2, pady=5)
-
         # 配置列权重使按钮均匀分布
         for i in range(4):
             button_frame.grid_columnconfigure(i, weight=1)
@@ -3157,7 +3157,8 @@ class CryptoTrader:
             return
         
         if not self.schedule_auto_find_coin():
-            self.auto_find_coin_timer = self.root.after(0, self.find_54_coin)    
+            selected_coin = self.coin_combobox.get()
+            self.auto_find_coin_timer = self.root.after(0, lambda: self.find_54_coin(selected_coin))    
         else:
             self.start_auto_find_coin_running = False
             self.stop_auto_find_coin()

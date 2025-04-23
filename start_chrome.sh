@@ -51,7 +51,7 @@ check_driver() {
     return 0
 }
 
-# 自动安装兼容的 chromedriver（尝试最多 5 个 patch 子版本）
+# 自动安装兼容的 chromedriver（尝试最多 3个 patch 子版本）
 install_driver() {
     echo -e "${YELLOW}尝试下载安装兼容的 chromedriver...${NC}"
     CHROME_VERSION=$(get_chrome_version)
@@ -67,7 +67,7 @@ install_driver() {
     mkdir -p "$TMP_DIR"
     cd "$TMP_DIR" || return 1
 
-    for ((i=1; i<5; i++)); do
+    for ((i=1; i<3; i++)); do
         TRY_PATCH=$((PATCH_VERSION - i))
         TRY_VERSION="${BASE_VERSION}.${TRY_PATCH}"
         DRIVER_URL="https://storage.googleapis.com/chrome-for-testing-public/${TRY_VERSION}/mac-arm64/chromedriver-mac-arm64.zip"
@@ -86,7 +86,7 @@ install_driver() {
         fi
     done
 
-    echo -e "${RED}未能下载兼容 chromedriver（尝试了 5 个 patch 版本）${NC}"
+    echo -e "${RED}未能下载兼容 chromedriver（尝试了 3 个 patch 版本）${NC}"
     return 1
 }
 
