@@ -745,7 +745,7 @@ class CryptoTrader:
         """开始监控"""
         # 直接使用当前显示的网址
         self.target_url = self.url_entry.get()
-        self.logger.info(f"\033[32m✅ 开始监控网址: {self.target_url}\033[0m")
+        self.logger.info(f"\033[34m✅ 开始监控网址: {self.target_url}\033[0m")
         
         # 启用开始按钮，启用停止按钮
         self.start_button['state'] = 'disabled'
@@ -769,7 +769,7 @@ class CryptoTrader:
         self.set_amount_button['state'] = 'normal'
         # 启动页面刷新
         self.root.after(40000, self.refresh_page)
-        self.logger.info("\033[32m✅ 页面自动刷新启动成功\033[0m")
+        self.logger.info("\033[34m✅ 页面自动刷新启动成功\033[0m")
         # 启动登录状态监控
         self.root.after(8000, self.start_login_monitoring)
         # 启动URL监控
@@ -830,7 +830,7 @@ class CryptoTrader:
                 # 启动监控线程
                 self.monitoring_thread = threading.Thread(target=self.monitor_prices, daemon=True)
                 self.monitoring_thread.start()
-                self.logger.info("\033[32m✅ 启动实时监控价格和资金线程\033[0m")
+                self.logger.info("\033[34m✅ 启动实时监控价格和资金线程\033[0m")
                 
             except Exception as e:
                 error_msg = f"加载网站失败: {str(e)}"
@@ -914,7 +914,7 @@ class CryptoTrader:
             try:
                 # 使用subprocess直接执行脚本，不打开新终端
                 subprocess.run(['bash', script_path], check=True)
-                self.logger.info("\033[32m✅ 已重新启动Chrome浏览器\033[0m")
+                self.logger.info("\033[34m✅ 已重新启动Chrome浏览器\033[0m")
             except Exception as chrome_e:
                 self.logger.error(f"启动Chrome浏览器失败: {str(chrome_e)}")
 
@@ -932,7 +932,7 @@ class CryptoTrader:
                     WebDriverWait(self.driver, 10).until(
                         lambda d: d.execute_script('return document.readyState') == 'complete'
                     )
-                    self.logger.info("\033[32m✅ 浏览器驱动已成功重连\033[0m")
+                    self.logger.info("\033[34m✅ 浏览器驱动已成功重连\033[0m")
                     break
                 except Exception as e:
                     if attempt < max_retries - 1:
@@ -947,7 +947,7 @@ class CryptoTrader:
                 WebDriverWait(self.driver, 15).until(
                     lambda d: d.execute_script('return document.readyState') == 'complete'
                 )
-                self.logger.info(f"✅ 成功加载目标页面: {target_url}")
+                self.logger.info(f"\033[34m✅ 成功加载目标页面: {target_url}\033[0m")
             except Exception as e:
                 self.logger.error(f"加载目标页面失败: {str(e)}")
                 return
@@ -1155,7 +1155,7 @@ class CryptoTrader:
                 
             else:
                 if current_retry < 15:  # 最多重试15次
-                    self.logger.info("❌ 金额未成功设置,2秒后重试")
+                    self.logger.info("\033[31m❌ 金额未成功设置,2秒后重试\033[0m")
                     self.root.after(2000, lambda: self.check_amount_and_set_price(current_retry))
                 else:
                     self.logger.warning("金额设置超时")
@@ -1168,7 +1168,7 @@ class CryptoTrader:
         self.yes1_price_entry.insert(0, self.default_target_price)
         self.no1_price_entry.delete(0, tk.END)
         self.no1_price_entry.insert(0, self.default_target_price)
-        self.logger.info(f"\033[32m✅ 设置买入价格{self.default_target_price}成功\033[0m")
+        self.logger.info(f"\033[34m✅ 设置买入价格{self.default_target_price}成功\033[0m")
         self.close_windows()
 
     def set_yes_no_cash(self):
@@ -1194,7 +1194,7 @@ class CryptoTrader:
                         raise ValueError("无法从Cash值中提取数字")
                     # 移除逗号并转换为浮点数
                     cash_value = float(cash_match.group(1).replace(',', ''))
-                    self.logger.info(f"\033[32m✅ 提取到Cash值: {cash_value}\033[0m")
+                    self.logger.info(f"\033[34m✅ 提取到Cash值: {cash_value}\033[0m")
                     break
                 except Exception as e:
                     retry_count += 1
@@ -1246,7 +1246,7 @@ class CryptoTrader:
             self.no4_entry.delete(0, tk.END)
             self.no4_entry.insert(0, f"{self.yes4_amount:.2f}")
         
-            self.logger.info("\033[32m✅ YES/NO 金额设置完成\033[0m")
+            self.logger.info("\033[34m✅ YES/NO 金额设置完成\033[0m")
             self.update_status("金额设置成功")
             
         except Exception as e:
@@ -1274,7 +1274,7 @@ class CryptoTrader:
                 self.restart_browser()
 
             self.url_monitoring_running = True
-            self.logger.info("\033[32m✅ 启动URL监控\033[0m")
+            self.logger.info("\033[34m✅ 启动URL监控\033[0m")
 
             def check_url():
                 if self.running and self.driver:
@@ -1285,14 +1285,14 @@ class CryptoTrader:
                         if current_page_url != target_url:
                             self.logger.warning("检测到URL变化,正在恢复...")
                             self.driver.get(target_url)
-                            self.logger.info("\033[32m✅ 已恢复到正确的监控网址\033[0m")
+                            self.logger.info("\033[34m✅ 已恢复到正确的监控网址\033[0m")
 
                     except Exception as e:
                         self.logger.error(f"URL监控出错: {str(e)}")
                         # 重新导航到目标URL
                         if self.driver and self._is_browser_alive():
                             self.driver.get(self.target_url)
-                            self.logger.info("\033[32m✅ URL监控已自动修复\033[0m")
+                            self.logger.info("\033[34m✅ URL监控已自动修复\033[0m")
                     # 继续监控
                     if self.running:
                         self.url_check_timer = self.root.after(3000, check_url)  # 每3秒检查一次
@@ -1327,7 +1327,7 @@ class CryptoTrader:
             chrome_options.add_argument('--disable-dev-shm-usage')
             
             self.driver = webdriver.Chrome(options=chrome_options)
-            self.logger.info("\033[32m✅ 已重新连接到浏览器\033[0m")
+            self.logger.info("\033[34m✅ 已重新连接到浏览器\033[0m")
             return True
         except Exception as e:
             self.logger.error(f"重新连接浏览器失败: {str(e)}")
@@ -1377,7 +1377,7 @@ class CryptoTrader:
 
     def start_login_monitoring(self):
         """启动登录状态监控"""
-        self.logger.info("\033[32m✅ 启动登录状态监控\033[0m")
+        self.logger.info("\033[34m✅ 启动登录状态监控\033[0m")
         if not self.driver:
             self.restart_browser()
             
@@ -1449,7 +1449,7 @@ class CryptoTrader:
             time.sleep(3)
 
             if not self.find_login_button():
-                self.logger.info("\033[32m✅ 登录成功\033[0m")
+                self.logger.info("\033[34m✅ 登录成功\033[0m")
                 self.login_running = False
                 self.driver.get(self.target_url)
                 time.sleep(2)
@@ -1489,7 +1489,7 @@ class CryptoTrader:
             if self.is_buy_accept():
                 # 点击 "Accept" 按钮
                 pyautogui.press('enter')
-                self.logger.info("\033[32m✅ 点击accept成功\033[0m")
+                self.logger.info("\033[34m✅ 点击accept成功\033[0m")
 
                 self.refresh_page()
                 self.start_auto_find_coin()
@@ -1520,7 +1520,7 @@ class CryptoTrader:
                 if self.running and self.driver and not self.trading:
                     self.driver.refresh()
                     refresh_time = self.refresh_interval / 60000
-                    self.logger.info(f"\033[32m✅ {refresh_time} 分钟后刷新成功\033[0m")      
+                    self.logger.info(f"\033[34m✅ {refresh_time} 分钟后刷新成功\033[0m")      
                 else:
                     self.logger.info("刷新失败")
                     self.logger.info(f"trading={self.trading}")
@@ -1625,7 +1625,7 @@ class CryptoTrader:
                         if self.is_buy_accept():
                             # 点击 "Accept" 按钮
                             self.refocus_and_accept()
-                            self.logger.info("\033[32m✅ 点击 ENTER 完成\033[0m")
+                            self.logger.info("\033[34m✅ 点击 ENTER 完成\033[0m")
                             time.sleep(1)
                             self.buy_confirm_button.invoke()
                             
@@ -1662,7 +1662,7 @@ class CryptoTrader:
                             self.no5_price_entry.delete(0, tk.END)
                             self.no5_price_entry.insert(0, "0.98")
                             self.no5_price_entry.configure(foreground='red')  # 添加红色设置
-                            self.logger.info("\033[32m✅ First_trade执行成功\033[0m")
+                            self.logger.info("\033[34m✅ First_trade执行成功\033[0m")
                             self.root.after(30000, self.driver.refresh)
                             break
                         else:
@@ -1686,7 +1686,7 @@ class CryptoTrader:
                             self.refocus_and_accept()
                             time.sleep(0.5)
                             
-                            self.logger.info("\033[32m✅ 点击 ENTER 完成\033[0m")
+                            self.logger.info("\033[34m✅ 点击 ENTER 完成\033[0m")
                             time.sleep(1)
                             self.buy_confirm_button.invoke()
                        
@@ -1721,7 +1721,7 @@ class CryptoTrader:
                             self.no5_price_entry.delete(0, tk.END)
                             self.no5_price_entry.insert(0, "0.98")
                             self.no5_price_entry.configure(foreground='red')  # 添加红色设置
-                            self.logger.info("\033[32m✅ First_trade执行成功\033[0m")
+                            self.logger.info("\033[34m✅ First_trade执行成功\033[0m")
                             self.root.after(30000, self.driver.refresh)
                             break
                         else:
@@ -1784,7 +1784,7 @@ class CryptoTrader:
                             self.refocus_and_accept()
                             time.sleep(0.5)
                             
-                            self.logger.info("\033[32m✅ 点击 ENTER 完成\033[0m")
+                            self.logger.info("\033[34m✅ 点击 ENTER 完成\033[0m")
                             time.sleep(1)
                             self.buy_confirm_button.invoke()
                    
@@ -1811,7 +1811,7 @@ class CryptoTrader:
                                 amount=float(self.buy_yes_amount),
                                 trade_count=self.trade_count
                             )
-                            self.logger.info("\033[32m✅ Second_trade执行成功\033[0m")
+                            self.logger.info("\033[34m✅ Second_trade执行成功\033[0m")
                             self.root.after(30000, self.driver.refresh)
                             break
                         else:
@@ -1836,7 +1836,7 @@ class CryptoTrader:
                             self.refocus_and_accept()
                             time.sleep(1)
                             self.buy_confirm_button.invoke()
-                            self.logger.info("\033[32m✅ 点击 ENTER 完成\033[0m")
+                            self.logger.info("\033[34m✅ 点击 ENTER 完成\033[0m")
                        
                         if self.Verify_buy_no():
 
@@ -1861,7 +1861,7 @@ class CryptoTrader:
                                 amount=float(self.buy_no_amount),
                                 trade_count=self.trade_count
                             )
-                            self.logger.info("\033[32m✅ Second_trade执行成功\033[0m")
+                            self.logger.info("\033[34m✅ Second_trade执行成功\033[0m")
                             self.root.after(30000, self.driver.refresh)
                             break
                         else:
@@ -1951,7 +1951,7 @@ class CryptoTrader:
                                 amount=float(self.buy_yes_amount),
                                 trade_count=self.trade_count
                             )   
-                            self.logger.info("\033[32m✅ Third_trade执行成功\033[0m")
+                            self.logger.info("\033[34m✅ Third_trade执行成功\033[0m")
                             self.root.after(30000, self.driver.refresh)
                             break
                         else:
@@ -1975,7 +1975,7 @@ class CryptoTrader:
                             self.refocus_and_accept()
                             time.sleep(1)
                             self.buy_confirm_button.invoke()
-                            self.logger.info("\033[32m✅ 点击 ENTER 完成\033[0m")
+                            self.logger.info("\033[34m✅ 点击 ENTER 完成\033[0m")
                         
                      
                         if self.Verify_buy_no():
@@ -2001,7 +2001,7 @@ class CryptoTrader:
                                 amount=float(self.buy_no_amount),
                                 trade_count=self.trade_count
                             )
-                            self.logger.info("\033[32m✅ Third_trade执行成功\033[0m")
+                            self.logger.info("\033[34m✅ Third_trade执行成功\033[0m")
                             self.root.after(30000, self.driver.refresh)
                             break
                         else:
@@ -2094,7 +2094,7 @@ class CryptoTrader:
                                 amount=float(self.buy_yes_amount),
                                 trade_count=self.trade_count
                             )
-                            self.logger.info("\033[32m✅ Forth_trade执行成功\033[0m")
+                            self.logger.info("\033[34m✅ Forth_trade执行成功\033[0m")
                             self.root.after(30000, self.driver.refresh)
                             break
                         else:
@@ -2117,7 +2117,7 @@ class CryptoTrader:
                             self.refocus_and_accept()
                             time.sleep(1)
                             self.buy_confirm_button.invoke()
-                            self.logger.info("\033[32m✅ 点击 ENTER 完成\033[0m")
+                            self.logger.info("\033[34m✅ 点击 ENTER 完成\033[0m")
                     
                         if self.Verify_buy_no():
                             # 重置Yes4和No4价格为0.00
@@ -2146,7 +2146,7 @@ class CryptoTrader:
                                 amount=float(self.buy_no_amount),
                                 trade_count=self.trade_count
                             )
-                            self.logger.info("\033[32m✅ Forth_trade执行成功\033[0m")
+                            self.logger.info("\033[34m✅ Forth_trade执行成功\033[0m")
                             self.root.after(30000, self.driver.refresh)
                             break
                         else:
@@ -2197,7 +2197,7 @@ class CryptoTrader:
 
                 # 检查Yes5价格匹配
                 if 0 <= (yes_price - yes5_target) <= 0.03 and yes5_target > 0:
-                    self.logger.info("\033[32m✅ Up 5价格匹配,执行自动卖出\033[0m")
+                    self.logger.info("\033[34m✅ Up 5价格匹配,执行自动卖出\033[0m")
                     while True:
                         # 执行卖出YES操作
                         self.only_sell_yes()
@@ -2267,7 +2267,7 @@ class CryptoTrader:
             
                 # 检查No5价格匹配
                 if 0 <= (no_price - no5_target) <= 0.03 and no5_target > 0:
-                    self.logger.info("\033[32m✅ Down 5价格匹配,执行自动卖出\033[0m")
+                    self.logger.info("\033[34m✅ Down 5价格匹配,执行自动卖出\033[0m")
                     while True:
                         # 卖完 Down 后，自动再卖 Up                      
                         self.only_sell_no()
@@ -2337,7 +2337,7 @@ class CryptoTrader:
             self.refocus_and_accept()
             time.sleep(1)
             self.sell_confirm_button.invoke()
-            self.logger.info("\033[32m✅ 点击 ACCEPT 完成\033[0m")
+            self.logger.info("\033[34m✅ 点击 ACCEPT 完成\033[0m")
 
         if self.Verify_sold_yes():
              # 增加卖出计数
@@ -2390,7 +2390,7 @@ class CryptoTrader:
             self.refocus_and_accept()
             time.sleep(1)
             self.sell_confirm_button.invoke()
-            self.logger.info("\033[32m✅ 点击 ACCEPT 完成\033[0m")
+            self.logger.info("\033[34m✅ 点击 ACCEPT 完成\033[0m")
         
         if self.Verify_sold_no():
             # 增加卖出计数
@@ -2410,7 +2410,7 @@ class CryptoTrader:
     
     def reset_trade(self):
         """重置交易"""
-        self.logger.info("\033[32m✅ 重置交易,把 YES1/NO1 价格设置为目标价格\033[0m")
+        self.logger.info("\033[34m✅ 重置交易,把 YES1/NO1 价格设置为目标价格\033[0m")
         # 在所有操作完成后,重置交易
         time.sleep(2)
         
@@ -2432,7 +2432,7 @@ class CryptoTrader:
             )
            
         if accept_button:
-            self.logger.info("\033[32m✅ 检测到ACCEPT弹窗\033[0m")
+            self.logger.info("\033[34m✅ 检测到ACCEPT弹窗\033[0m")
             return True
         else:
             self.logger.info("\033[31m❌ 没有检测到ACCEPT弹窗\033[0m")
@@ -2453,7 +2453,7 @@ class CryptoTrader:
                 silent=True
             )
             buy_confirm_button.click()
-            self.update_status("\033[32m✅ 已点击 Buy-Confirm 按钮\033[0m")
+            self.update_status("\033[34m✅ 已点击 Buy-Confirm 按钮\033[0m")
     
     def click_position_sell_no(self):
         """点击 Positions-Sell-No 按钮"""
@@ -2491,7 +2491,7 @@ class CryptoTrader:
                     )
             # 执行点击
             self.driver.execute_script("arguments[0].click();", button)
-            self.update_status("\033[32m✅ 已点击 Positions-Sell-No 按钮\033[0m")  
+            self.update_status("\033[34m✅ 已点击 Positions-Sell-No 按钮\033[0m")  
         except Exception as e:
             error_msg = f"点击 Positions-Sell-No 按钮失败: {str(e)}"
             self.logger.error(error_msg)
@@ -2533,7 +2533,7 @@ class CryptoTrader:
                     )
             # 执行点击
             self.driver.execute_script("arguments[0].click();", button)
-            self.update_status("\033[32m✅ 已点击 Positions-Sell-Yes 按钮\033[0m")  
+            self.update_status("\033[34m✅ 已点击 Positions-Sell-Yes 按钮\033[0m")  
         except Exception as e:
             error_msg = f"点击 Positions-Sell-Yes 按钮失败: {str(e)}"
             self.logger.error(error_msg)
@@ -2573,7 +2573,7 @@ class CryptoTrader:
                     silent=True
                 )
             button.click()
-            self.update_status("已点击 Buy 按钮")
+            self.update_status("\033[34m✅ 已点击 Buy 按钮\033[0m")
         except Exception as e:
             self.logger.error(f"点击 Buy 按钮失败: {str(e)}")
             self.update_status(f"点击 Buy 按钮失败: {str(e)}")
@@ -2593,7 +2593,7 @@ class CryptoTrader:
                     silent=True
                 )
             button.click()
-            self.update_status("已点击 Buy-Yes 按钮")
+            self.update_status("\033[34m✅ 已点击 Buy-Yes 按钮\033[0m")
         except Exception as e:
             self.logger.error(f"点击 Buy-Yes 按钮失败: {str(e)}")
             self.update_status(f"点击 Buy-Yes 按钮失败: {str(e)}")
@@ -2612,7 +2612,7 @@ class CryptoTrader:
                     silent=True
                 )
             button.click()
-            self.update_status("已点击 Buy-No 按钮")
+            self.update_status("\033[34m✅ 已点击 Buy-No 按钮\033[0m")
         except Exception as e:
             self.logger.error(f"点击 Buy-No 按钮失败: {str(e)}")
             self.update_status(f"点击 Buy-No 按钮失败: {str(e)}")
@@ -3217,7 +3217,7 @@ class CryptoTrader:
                             # 保存当前 URL 到 config
                             self.config['website']['url'] = coin_new_weekly_url
                             self.save_config()
-                            self.logger.info(f"\033[32m{coin}: YES/{int(yes_price)}¢|NO/{int(no_price)}¢ ✅ 符合要求,已保存到 config\033[0m")
+                            self.logger.info(f"\033[34m{coin}: YES/{int(yes_price)}¢|NO/{int(no_price)}¢ ✅ 符合要求,已保存到 config\033[0m")
 
                             # 清除url_entry中的url
                             self.url_entry.delete(0, tk.END)
@@ -3225,7 +3225,7 @@ class CryptoTrader:
                             self.url_entry.insert(0, coin_new_weekly_url)
 
                             self.target_url = self.url_entry.get()
-                            self.logger.info(f"\033[32m✅ {self.target_url} 已插入到主界面上\033[0m")
+                            self.logger.info(f"\033[34m✅ {self.target_url} 已插入到主界面上\033[0m")
                             self.start_url_monitoring()
                             self.refresh_page()
                             self.stop_auto_find_coin()  
@@ -3262,7 +3262,7 @@ class CryptoTrader:
             if hasattr(self, 'auto_find_coin_timer') and self.auto_find_coin_timer:
                 self.root.after_cancel(self.auto_find_coin_timer)
                 self.auto_find_coin_timer = None
-                self.logger.info("\033[32m✅ 自动找币定时器已取消\033[0m")
+                self.logger.info("\033[34m✅ 自动找币定时器已取消\033[0m")
             else:
                 self.logger.info("自动找币未在运行中,无需停止")
             # 设置标志位，让循环内部可以检测到停止信号
@@ -3285,7 +3285,7 @@ class CryptoTrader:
             
             # 记录日志
             if is_in_timeframe:
-                self.logger.info(f"\033[32m✅ {now_time.strftime('%H:%M:%S')} 在自动找币时间段内,开始找币!\033[0m")
+                self.logger.info(f"\033[34m✅ {now_time.strftime('%H:%M:%S')} 在自动找币时间段内,开始找币!\033[0m")
             else:
                 self.logger.info(f"\033[31m❌ {now_time.strftime('%H:%M:%S')} 不在自动找币时间段内,停止找币!\033[0m")
             
@@ -3455,7 +3455,7 @@ class CryptoTrader:
 
             for card in cards:
                 if today_str in card.text:
-                    self.logger.info(f"✅ 找到包含日期的卡片: {card.text.strip()}")
+                    self.logger.info(f"\033[34m✅ 找到包含日期的卡片: {card.text.strip()}\033[0m")
 
                     # Command 键（macOS）或 Control 键（Windows/Linux）
                     modifier_key = Keys.COMMAND if sys.platform == 'darwin' else Keys.CONTROL
@@ -3464,10 +3464,10 @@ class CryptoTrader:
                     actions = ActionChains(self.driver)
                     actions.key_down(modifier_key).click(card).key_up(modifier_key).perform()
 
-                    self.logger.info("🆕 成功用快捷键打开新标签页！")
+                    self.logger.info("\033[34m🆕 成功用快捷键打开新标签页！\033[0m")
                     return True
 
-            self.logger.warning("❌ 没有找到包含今天日期的卡片")
+            self.logger.warning("\033[31m❌ 没有找到包含今天日期的卡片\033[0m")
             return False
 
         except Exception as e:
