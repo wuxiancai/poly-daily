@@ -3248,7 +3248,7 @@ class CryptoTrader:
             self.root.after(5000, self.start_url_monitoring)
             self.start_auto_find_coin_running = False
             # 增加 10 分钟后再次找币
-            self.root.after(600000, self.start_auto_find_coin)
+            self.root.after(300000, self.start_auto_find_coin)
             self.logger.info("10分钟后再次找币")
 
         except Exception as e:
@@ -3281,7 +3281,7 @@ class CryptoTrader:
             now_time = datetime.now(timezone.utc).astimezone(beijing_tz)
             
             # 判断是否在0点10分到0点30分之间
-            is_in_timeframe = (now_time.hour == 0 and 5 <= now_time.minute < 30)
+            is_in_timeframe = (now_time.hour == 0 and 1 <= now_time.minute < 30)
             
             # 记录日志
             if is_in_timeframe:
