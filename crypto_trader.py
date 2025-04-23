@@ -1520,7 +1520,7 @@ class CryptoTrader:
                 if self.running and self.driver and not self.trading:
                     self.driver.refresh()
                     refresh_time = self.refresh_interval / 60000
-                    self.logger.info(f"\033[34m✅ {refresh_time} 分钟后刷新成功\033[0m")      
+                    self.logger.info(f"\033[34m✅ {refresh_time} 分钟后再次刷新\033[0m")      
                 else:
                     self.logger.info("刷新失败")
                     self.logger.info(f"trading={self.trading}")
