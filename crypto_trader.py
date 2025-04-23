@@ -3156,7 +3156,7 @@ class CryptoTrader:
             self.logger.info("正在交易,退出自动找币")
             return
         
-        if not self.schedule_auto_find_coin():
+        if self.schedule_auto_find_coin():
             selected_coin = self.coin_combobox.get()
             self.auto_find_coin_timer = self.root.after(0, lambda: self.find_54_coin(selected_coin))    
         else:
